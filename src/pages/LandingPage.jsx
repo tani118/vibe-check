@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 
@@ -6,289 +6,363 @@ const LandingPage = () => {
   const navigate = useNavigate()
   const [currentVibe, setCurrentVibe] = useState(0)
   const [scrollY, setScrollY] = useState(0)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const heroRef = useRef(null)
 
-  // Generate stable random values for background elements
-  const [backgroundElements] = useState(() => 
-    Array.from({ length: 20 }).map((_, i) => ({
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      width: Math.random() * 100 + 20,
-      height: Math.random() * 100 + 20,
-      color: ['#08D9D6', '#FF2E63', '#FFD700', '#FF69B4'][Math.floor(Math.random() * 4)],
-      delay: Math.random() * 2,
-      duration: Math.random() * 3 + 2
+  // Generate stable random values for floating particles
+  const [particles] = useState(() => 
+    Array.from({ length: 50 }).map((_, i) => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 4 + 1,
+      opacity: Math.random() * 0.6 + 0.2,
+      speed: Math.random() * 2 + 0.5,
+      color: ['var(--primary-400)', 'var(--secondary-400)', 'var(--accent-400)', 'var(--primary-300)'][Math.floor(Math.random() * 4)],
+      delay: Math.random() * 2
     }))
   )
 
-  // Generate stable random values for final CTA section background
-  const [finalCTAElements] = useState(() => 
-    Array.from({ length: 15 }).map((_, i) => ({
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      width: Math.random() * 60 + 20,
-      height: Math.random() * 60 + 20,
-      delay: Math.random() * 2,
-      duration: Math.random() * 4 + 2
+  // Generate stable random values for grid pattern
+  const [gridElements] = useState(() => 
+    Array.from({ length: 100 }).map((_, i) => ({
+      opacity: Math.random() * 0.3,
+      delay: Math.random() * 3
     }))
   )
 
-  const vibes = ['✨ Absolutely Radiant', '😄 Super Positive', '😊 Pretty Good', '🙂 Decent', '😐 Neutral', '😕 Meh', '😞 Not Great', '😢 Pretty Low', '😭 Rock Bottom']
+  const vibes = [
+    '✨ Absolutely Radiant', 
+    '🔥 Super Positive', 
+    '😊 Pretty Good', 
+    '🙂 Decent', 
+    '😐 Neutral', 
+    '😕 Meh', 
+    '😞 Not Great', 
+    '😢 Pretty Low', 
+    '💀 Rock Bottom'
+  ]
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
+    const handleMouseMove = (e) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth - 0.5) * 20,
+        y: (e.clientY / window.innerHeight - 0.5) * 20
+      })
+    }
+    
     window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
   }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentVibe((prev) => (prev + 1) % vibes.length)
-    }, 2000)
+    }, 3000)
     return () => clearInterval(interval)
   }, [])
 
   return (
-    <div className="bg-black overflow-hidden">
-      {/* Hero Section */}
-      <section className="relative min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900 overflow-hidden">
-        {/* Animated background elements with parallax */}
+    <div className="relative min-h-screen bg-neutral-950 overflow-hidden">
+      {/* Animated Background Grid */}
+      <div className="fixed inset-0 opacity-30">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-950/50 via-secondary-950/30 to-accent-950/50"></div>
         <div 
-          className="absolute inset-0"
-          style={{ transform: `translateY(${scrollY * 0.5}px)` }}
+          className="grid grid-cols-20 grid-rows-20 w-full h-full"
+          style={{
+            transform: `translate(${mousePosition.x * 0.5}px, ${mousePosition.y * 0.5}px)`
+          }}
         >
-          {backgroundElements.map((element, i) => (
+          {gridElements.map((element, i) => (
             <div
               key={i}
-              className={`absolute rounded-full animate-pulse`}
+              className="border border-primary-500/20 animate-pulse"
               style={{
-                left: `${element.left}%`,
-                top: `${element.top}%`,
-                width: `${element.width}px`,
-                height: `${element.height}px`,
-                background: `radial-gradient(circle, ${element.color}40, transparent)`,
+                opacity: element.opacity,
                 animationDelay: `${element.delay}s`,
-                animationDuration: `${element.duration}s`
+                animationDuration: '4s'
               }}
             />
           ))}
         </div>
+      </div>
 
-        {/* Floating emojis with parallax scroll animations */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div 
-            className="absolute top-20 left-[10%] text-6xl animate-float"
-            style={{ transform: `translateY(${scrollY * 0.1}px) rotate(${scrollY * 0.1}deg)` }}
-          >🔥</div>
-          <div 
-            className="absolute top-32 right-[15%] text-5xl animate-bounce"
-            style={{ transform: `translateY(${scrollY * -0.15}px) rotate(${scrollY * -0.05}deg)` }}
-          >⚡</div>
-          <div 
-            className="absolute top-64 left-[20%] text-4xl animate-pulse"
-            style={{ transform: `translateY(${scrollY * 0.08}px) rotate(${scrollY * 0.08}deg)` }}
-          >💎</div>
-          <div 
-            className="absolute top-80 right-[25%] text-6xl animate-float"
-            style={{ transform: `translateY(${scrollY * -0.12}px) rotate(${scrollY * -0.1}deg)` }}
-          >🌈</div>
-          <div 
-            className="absolute bottom-40 left-[15%] text-5xl animate-bounce"
-            style={{ transform: `translateY(${scrollY * 0.2}px) rotate(${scrollY * 0.05}deg)` }}
-          >⭐</div>
-          <div 
-            className="absolute bottom-60 right-[20%] text-4xl animate-pulse"
-            style={{ transform: `translateY(${scrollY * -0.18}px) rotate(${scrollY * -0.08}deg)` }}
-          >🦋</div>
-          <div 
-            className="absolute top-40 left-[80%] text-5xl animate-float"
-            style={{ transform: `translateY(${scrollY * 0.14}px) rotate(${scrollY * 0.12}deg)` }}
-          >✨</div>
-          <div 
-            className="absolute bottom-32 left-[70%] text-6xl animate-bounce"
-            style={{ transform: `translateY(${scrollY * -0.1}px) rotate(${scrollY * -0.06}deg)` }}
-          >🌙</div>
+      {/* Floating Particles */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {particles.map((particle, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full animate-float-slow"
+            style={{
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              backgroundColor: particle.color,
+              opacity: particle.opacity,
+              animationDelay: `${particle.delay}s`,
+              animationDuration: `${particle.speed + 8}s`,
+              transform: `translate(${mousePosition.x * 0.1}px, ${mousePosition.y * 0.1}px)`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Navigation */}
+      <nav className="relative z-50 flex items-center justify-between p-6 md:p-8">
+        <div className="text-2xl md:text-3xl font-bold holographic-text">
+          VibeCheck
         </div>
+        <div className="flex gap-4">
+          <button
+            onClick={() => navigate('/login')}
+            className="btn-ghost"
+          >
+            Sign In
+          </button>
+          <button
+            onClick={() => navigate('/signup')}
+            className="btn-primary"
+          >
+            Get Started
+          </button>
+        </div>
+      </nav>
 
+      {/* Hero Section */}
+      <section ref={heroRef} className="relative z-10 min-h-screen flex items-center justify-center px-6">
         <div 
-          className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center"
-          style={{ transform: `translateY(${scrollY * -0.3}px)` }}
+          className="max-w-6xl mx-auto text-center"
+          style={{
+            transform: `translateY(${scrollY * -0.3}px) translateX(${mousePosition.x * 0.5}px)`
+          }}
         >
-          <div className="max-w-6xl mx-auto">
-            {/* Main headline with glitch effect */}
-            <div className="mb-8">
-              <h1 className="text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 mb-4 tracking-tight filter drop-shadow-lg">
-                vibe check
-              </h1>
-              <div className="text-2xl md:text-3xl font-bold text-white mb-6">
-                what's your energy rn? 
-                <span className="inline-block animate-pulse ml-2">📱</span>
-              </div>
-              <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed font-medium">
-                fr no cap this quiz hits different 💯 find out if you're bringing authentic energy or if you need to touch grass
+          {/* Main Headlines */}
+          <div className="space-y-8 mb-12">
+            <h1 className="text-7xl md:text-9xl lg:text-[12rem] font-black tracking-tighter">
+              <span className="holographic-text block leading-none">vibe</span>
+              <span className="gradient-text block leading-none">check</span>
+            </h1>
+            
+            <div className="space-y-4">
+              <p className="text-2xl md:text-4xl font-bold text-white/90">
+                discover your authentic energy ✨
+              </p>
+              <p className="text-lg md:text-xl text-neutral-300 max-w-3xl mx-auto leading-relaxed">
+                An AI-powered personality quiz that reveals your true vibe through smart questions and beautiful insights
               </p>
             </div>
+          </div>
 
-            {/* Rotating vibe display */}
-            <div className="mb-12">
-              <div className="bg-black/30 backdrop-blur-xl rounded-3xl p-8 border border-white/20 max-w-md mx-auto">
-                <p className="text-white/80 mb-4 text-lg">current vibe rotation:</p>
-                <div className="text-3xl font-bold text-white transition-all duration-500">
+          {/* Dynamic Vibe Display */}
+          <div className="mb-16">
+            <div className="glass-card p-8 max-w-md mx-auto relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 animate-pulse"></div>
+              <div className="relative z-10">
+                <p className="text-neutral-400 text-sm uppercase tracking-wider mb-4">Current Vibe</p>
+                <div className="text-2xl md:text-3xl font-bold text-white transition-all duration-700 transform">
                   {vibes[currentVibe]}
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* CTA Buttons */}
-            <div className="space-y-6">
-              <Button 
-                onClick={() => navigate('/signup')}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xl px-12 py-6 h-auto font-bold rounded-full shadow-2xl hover:shadow-pink-500/25 transition-all duration-300 transform hover:scale-110 border-2 border-white/20"
+          {/* CTA Buttons */}
+          <div className="space-y-6">
+            <button
+              onClick={() => navigate('/signup')}
+              className="btn-primary text-xl px-12 py-6 group"
+            >
+              <span className="flex items-center gap-3">
+                Start Your Journey
+                <svg className="w-6 h-6 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5-5 5M6 12h12" />
+                </svg>
+              </span>
+            </button>
+            
+            <p className="text-neutral-400">
+              Already have an account?{' '}
+              <button
+                onClick={() => navigate('/login')}
+                className="text-primary-400 font-semibold hover:text-primary-300 transition-colors underline decoration-2 underline-offset-4"
               >
-                let's gooo friend 🚀
-              </Button>
-              <div className="text-white/80 text-lg">
-                already vibing with us?{' '}
-                <button
-                  onClick={() => navigate('/login')}
-                  className="text-pink-400 font-bold underline decoration-2 underline-offset-4 hover:text-pink-300 transition-colors"
-                >
-                  log in here ✨
-                </button>
-              </div>
-            </div>
+                Sign in here
+              </button>
+            </p>
           </div>
         </div>
 
-        {/* Scroll indicator */}
+        {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-ping"></div>
+          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-gradient-to-b from-primary-400 to-transparent rounded-full mt-2 animate-pulse"></div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-br from-black via-purple-950 to-black relative">
-        <div 
-          className="max-w-7xl mx-auto px-6"
-          style={{ transform: `translateY(${scrollY * -0.1}px)` }}
-        >
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400 mb-6">
-              why it's iconic
+      <section className="relative z-10 py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div 
+            className="text-center mb-20"
+            style={{ transform: `translateY(${scrollY * -0.1}px)` }}
+          >
+            <h2 className="text-5xl md:text-7xl font-black mb-6">
+              <span className="gradient-text">Why VibeCheck</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              fr this app is literally the moment 💯
+            <p className="text-xl md:text-2xl text-neutral-300 max-w-3xl mx-auto">
+              More than just a quiz – it's your personal energy ecosystem
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div 
+            className="grid md:grid-cols-3 gap-8"
+            style={{ transform: `translateY(${scrollY * -0.05}px)` }}
+          >
             {[
               {
-                emoji: "🧠",
-                title: "big brain energy",
-                desc: "10 questions that actually slap and reveal your whole personality tbh",
+                icon: "🧠",
+                title: "Intelligent Analysis",
+                description: "Advanced algorithms analyze your responses to provide deep personality insights",
                 color: "from-blue-500 to-cyan-500"
               },
               {
-                emoji: "👥",
-                title: "community vibes",
-                desc: "stalk other people's energy (in a wholesome way) and star your faves",
-                color: "from-pink-500 to-purple-500"
+                icon: "👥",
+                title: "Community Connection",
+                description: "Connect with others who share your vibe and discover new perspectives",
+                color: "from-purple-500 to-pink-500"
               },
               {
-                emoji: "📈",
-                title: "glow up tracker",
-                desc: "watch your character development arc with mood history tracking",
+                icon: "📈",
+                title: "Growth Tracking",
+                description: "Monitor your emotional journey and celebrate your personal evolution",
                 color: "from-orange-500 to-red-500"
               }
             ].map((feature, i) => (
-              <div key={i} className="group relative">
-                <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-white/30 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2">
-                  <div className="text-6xl mb-6 group-hover:animate-bounce">{feature.emoji}</div>
-                  <h3 className={`text-2xl font-bold bg-gradient-to-r ${feature.color} bg-clip-text text-transparent mb-4`}>
+              <div 
+                key={i} 
+                className="group relative"
+                style={{ animationDelay: `${i * 0.2}s` }}
+              >
+                <div className="glass-card p-8 h-full transition-all duration-500 group-hover:-translate-y-1">
+                  <div className="text-6xl mb-6 group-hover:animate-bounce transition-transform">
+                    {feature.icon}
+                  </div>
+                  <h3 className={`text-2xl font-bold mb-4 bg-gradient-to-r ${feature.color} bg-clip-text text-transparent`}>
                     {feature.title}
                   </h3>
-                  <p className="text-gray-300 text-lg leading-relaxed">{feature.desc}</p>
+                  <p className="text-neutral-300 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
-                <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-20 rounded-3xl transition-opacity duration-500 -z-10 blur-xl`}></div>
+                
+                {/* Glow effect */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-20 rounded-xl transition-opacity duration-500 -z-10 blur-xl`}></div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Vibe Categories Preview */}
-      <section className="py-20 bg-gradient-to-br from-purple-950 via-black to-pink-950">
-        <div 
-          className="max-w-6xl mx-auto px-6"
-          style={{ transform: `translateY(${scrollY * -0.05}px)` }}
-        >
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400 mb-6">
-              all the vibes
+      {/* Vibe Spectrum Section */}
+      <section className="relative z-10 py-32 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div 
+            className="text-center mb-20"
+            style={{ transform: `translateY(${scrollY * -0.08}px)` }}
+          >
+            <h2 className="text-5xl md:text-7xl font-black mb-6">
+              <span className="holographic-text">The Vibe Spectrum</span>
             </h2>
-            <p className="text-xl text-gray-300">
-              from absolute fam energy to touch grass mode 💀
+            <p className="text-xl text-neutral-300">
+              From absolute radiance to rock bottom – we map it all
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            style={{ transform: `translateY(${scrollY * -0.06}px)` }}
+          >
             {vibes.map((vibe, i) => (
-              <div key={i} className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/30 transition-all duration-300 transform hover:scale-105 text-center">
-                <div className="text-2xl font-bold text-white">{vibe}</div>
+              <div 
+                key={i} 
+                className="glass-card p-6 text-center group hover:opacity-90 transition-all duration-300"
+                style={{ animationDelay: `${i * 0.1}s` }}
+              >
+                <div className="text-xl font-bold text-white group-hover:holographic-text transition-all duration-300">
+                  {vibe}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Social Proof / Testimonials */}
-      <section className="py-20 bg-gradient-to-br from-black via-pink-950 to-black">
-        <div 
-          className="max-w-6xl mx-auto px-6"
-          style={{ transform: `translateY(${scrollY * -0.08}px)` }}
-        >
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400 mb-6">
-              the reviews are in
+      {/* Social Proof Section */}
+      <section className="relative z-10 py-32 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div 
+            className="text-center mb-20"
+            style={{ transform: `translateY(${scrollY * -0.07}px)` }}
+          >
+            <h2 className="text-5xl md:text-7xl font-black mb-6">
+              <span className="gradient-text">Real Stories</span>
             </h2>
-            <p className="text-xl text-gray-300">
-              and they're absolutely sending me 💀
+            <p className="text-xl text-neutral-300">
+              Authentic experiences from our community
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div 
+            className="grid md:grid-cols-2 gap-8"
+            style={{ transform: `translateY(${scrollY * -0.05}px)` }}
+          >
             {[
               {
-                text: "literally obsessed this app knows me better than my therapist 😭",
-                author: "authentic energy alex",
+                text: "VibeCheck helped me understand my emotional patterns in ways I never imagined. It's like having a personal therapist in your pocket.",
+                author: "Sarah Chen",
+                title: "UX Designer",
                 vibe: "✨ Absolutely Radiant"
               },
               {
-                text: "caught me at my lowest and now i'm on my glow up arc thank u vibe check ✨",
-                author: "self improvement legend",
+                text: "The community aspect is incredible. I've connected with people who truly get my energy and it's transformed my social life.",
+                author: "Marcus Johnson",
+                title: "Software Engineer", 
                 vibe: "🔥 Super Positive"
               },
               {
-                text: "the way this app called me out for my chaotic neutral energy... felt seen",
-                author: "chronically online alex",
-                vibe: "😐 Neutral"
+                text: "Tracking my vibes over time showed me patterns I was completely unaware of. It's been a game-changer for my mental health.",
+                author: "Elena Rodriguez",
+                title: "Graduate Student",
+                vibe: "😊 Pretty Good"
               },
               {
-                text: "my whole friend group is using this now we're basically a vibe cult",
-                author: "group chat admin",
-                vibe: "😊 Pretty Good"
+                text: "The quiz questions are so thoughtful and the insights are spot-on. It's like it sees right through to my core.",
+                author: "Alex Kim",
+                title: "Creative Director",
+                vibe: "🙂 Decent"
               }
-            ].map((review, i) => (
-              <div key={i} className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
-                <p className="text-lg text-white mb-6 leading-relaxed italic">"{review.text}"</p>
-                <div className="flex justify-between items-center">
+            ].map((testimonial, i) => (
+              <div 
+                key={i} 
+                className="glass-card p-8 space-y-6"
+                style={{ animationDelay: `${i * 0.2}s` }}
+              >
+                <p className="text-lg text-neutral-200 leading-relaxed italic">
+                  "{testimonial.text}"
+                </p>
+                <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-bold text-pink-400">@{review.author}</div>
-                    <div className="text-sm text-gray-400">current vibe: {review.vibe}</div>
+                    <div className="font-bold text-white">{testimonial.author}</div>
+                    <div className="text-sm text-neutral-400">{testimonial.title}</div>
+                    <div className="text-sm text-primary-400 mt-1">Current vibe: {testimonial.vibe}</div>
                   </div>
-                  <div className="text-2xl">💯</div>
+                  <div className="text-3xl">✨</div>
                 </div>
               </div>
             ))}
@@ -296,50 +370,62 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20 bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900 relative overflow-hidden">
-        <div className="absolute inset-0">
-          {finalCTAElements.map((element, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full animate-pulse"
-              style={{
-                left: `${element.left}%`,
-                top: `${element.top}%`,
-                width: `${element.width}px`,
-                height: `${element.height}px`,
-                background: `radial-gradient(circle, #08D9D680, transparent)`,
-                animationDelay: `${element.delay}s`,
-                animationDuration: `${element.duration}s`
-              }}
-            />
-          ))}
-        </div>
+      {/* Final CTA Section */}
+      <section className="relative z-10 py-32 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <div 
+            className="space-y-12"
+            style={{ transform: `translateY(${scrollY * -0.1}px)` }}
+          >
+            <h2 className="text-6xl md:text-8xl font-black">
+              <span className="holographic-text block mb-4">Ready to</span>
+              <span className="gradient-text">Discover You?</span>
+            </h2>
+            
+            <p className="text-2xl md:text-3xl text-neutral-300 font-light">
+              Your authentic journey begins with a single click
+            </p>
 
-        <div 
-          className="relative z-10 max-w-4xl mx-auto px-6 text-center"
-          style={{ transform: `translateY(${scrollY * -0.2}px)` }}
-        >
-          <h2 className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-pink-200 mb-8">
-            ready to vibe?
-          </h2>
-          <p className="text-2xl text-white/90 mb-12 font-medium">
-            your authentic moment starts now friend ✨
-          </p>
-          
-          <div className="space-y-6">
-            <Button 
-              onClick={() => navigate('/signup')}
-              className="bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 text-white text-2xl px-16 py-8 h-auto font-black rounded-full shadow-2xl hover:shadow-cyan-500/25 transition-all duration-300 transform hover:scale-110 border-4 border-white/30 animate-pulse"
-            >
-              let's start fr ✨
-            </Button>
-            <div className="text-lg text-white/80">
-              it's giving free energy, no cap 🧢
+            <div className="space-y-8">
+              <button
+                onClick={() => navigate('/signup')}
+                className="btn-primary text-2xl px-16 py-8 group relative overflow-hidden"
+              >
+                <span className="relative z-10 flex items-center gap-4">
+                  Start Your VibeCheck
+                  <svg className="w-8 h-8 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5-5 5M6 12h12" />
+                  </svg>
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-secondary-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+              </button>
+              
+              <p className="text-lg text-neutral-400">
+                Free forever • No spam • Join 50,000+ users
+              </p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="relative z-10 py-16 px-6 border-t border-white/10">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div className="text-2xl font-bold holographic-text mb-4 md:mb-0">
+              VibeCheck
+            </div>
+            <div className="flex gap-8 text-neutral-400">
+              <a href="#" className="hover:text-white transition-colors">Privacy</a>
+              <a href="#" className="hover:text-white transition-colors">Terms</a>
+              <a href="#" className="hover:text-white transition-colors">Support</a>
+            </div>
+          </div>
+          <div className="text-center mt-8 text-neutral-500">
+            © 2024 VibeCheck. Made with ✨ for authentic souls.
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

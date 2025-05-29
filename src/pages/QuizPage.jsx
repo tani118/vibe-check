@@ -85,9 +85,10 @@ const QuizPage = () => {
 
   if (quizComplete && vibeResult) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-black relative overflow-hidden">
+      <div className="min-h-screen bg-neutral-950 relative overflow-hidden">
         {/* Celebration background */}
         <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-950/50 via-secondary-950/30 to-accent-950/50"></div>
           {celebrationElements.map((element, i) => (
             <div
               key={i}
@@ -97,7 +98,7 @@ const QuizPage = () => {
                 top: `${element.top}%`,
                 width: `${element.width}px`,
                 height: `${element.height}px`,
-                background: `radial-gradient(circle, ${element.color}, transparent)`,
+                background: `radial-gradient(circle, ${element.color}60, transparent)`,
                 animationDelay: `${element.delay}s`,
                 animationDuration: `${element.duration}s`
               }}
@@ -105,61 +106,60 @@ const QuizPage = () => {
           ))}
         </div>
 
-        {/* Floating celebration emojis */}
+        {/* Floating celebration elements */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-10 left-[10%] text-6xl animate-bounce">🎉</div>
-          <div className="absolute top-20 right-[15%] text-5xl animate-wiggle">✨</div>
-          <div className="absolute top-32 left-[70%] text-4xl animate-float">🌟</div>
-          <div className="absolute bottom-20 left-[20%] text-6xl animate-pulse">💫</div>
-          <div className="absolute bottom-32 right-[25%] text-5xl animate-bounce">🎊</div>
+          <div className="absolute top-20 right-[15%] text-5xl animate-float">✨</div>
+          <div className="absolute top-32 left-[70%] text-4xl animate-pulse">🌟</div>
+          <div className="absolute bottom-20 left-[20%] text-6xl animate-bounce">💫</div>
+          <div className="absolute bottom-32 right-[25%] text-5xl animate-float">🎊</div>
         </div>
 
         <div className="relative z-10 flex items-center justify-center min-h-screen px-6 py-12">
-          <div className="w-full max-w-2xl text-center">
-            <div className="glass-card p-12 rounded-3xl">
-              <div className="text-8xl mb-6 animate-bounce">{vibeResult.emoji}</div>
+          <div className="w-full max-w-3xl text-center">
+            <div className="glass-card p-16">
+              <div className="text-9xl mb-8 animate-float">{vibeResult.emoji}</div>
               
-              <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-400 mb-6">
-                your vibe is
+              <h1 className="text-5xl md:text-6xl font-black mb-6">
+                <span className="holographic-text">Your Vibe Is</span>
               </h1>
               
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-8 gradient-text">
+              <h2 className="text-4xl md:text-6xl font-bold gradient-text mb-12">
                 {vibeResult.vibe}
               </h2>
               
-              <div className="bg-white/10 rounded-2xl p-6 mb-8 backdrop-blur-sm">
-                <p className="text-xl text-white/90 mb-4">
-                  your vibe score: <span className="font-bold text-cyan-400">{vibeResult.score}/50</span>
-                </p>
-                <p className="text-lg text-white/80">
+              <div className="glass-card p-8 mb-12">
+                <div className="text-4xl font-bold text-primary-400 mb-4">
+                  {vibeResult.score}/50
+                </div>
+                <div className="text-lg text-neutral-300">
                   {vibeResult.score >= 20 
-                    ? "friend you're absolutely bringing authentic energy rn ✨" 
+                    ? "You're radiating authentic positive energy ✨" 
                     : vibeResult.score >= 0
-                    ? "you're giving balanced energy, we love to see it ✨"
-                    : "it's giving 'need some self care' vibes and that's valid fam 💜"
+                    ? "You're maintaining beautiful balanced energy ⚖️"
+                    : "You're in a reflective phase, and that's perfectly valid 💜"
                   }
-                </p>
+                </div>
               </div>
 
-              <div className="space-y-4">
-                <Button
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <button
                   onClick={() => navigate('/home')}
-                  className="bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 text-lg"
+                  className="btn-primary text-lg px-8 py-4"
                 >
-                  check out your dashboard ✨
-                </Button>
+                  View Dashboard
+                </button>
                 
-                <Button
+                <button
                   onClick={() => navigate('/users')}
-                  variant="outline"
-                  className="bg-white/10 border-white/30 text-white hover:bg-white/20 font-bold py-4 px-8 rounded-full transition-all duration-300 text-lg ml-4"
+                  className="btn-secondary text-lg px-8 py-4"
                 >
-                  see other vibes 👥
-                </Button>
+                  Explore Community
+                </button>
               </div>
               
-              <p className="text-white/60 mt-6 text-sm">
-                want to retake? just hit up your dashboard friend
+              <p className="text-neutral-400 mt-8 text-sm">
+                Want to retake? Visit your dashboard anytime
               </p>
             </div>
           </div>
@@ -169,116 +169,125 @@ const QuizPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-purple-950 to-pink-950 relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0">
-        {backgroundElements.map((element, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full animate-pulse"
-            style={{
-              left: `${element.left}%`,
-              top: `${element.top}%`,
-              width: `${element.width}px`,
-              height: `${element.height}px`,
-              background: `radial-gradient(circle, ${element.color}, transparent)`,
-              animationDelay: `${element.delay}s`,
-              animationDuration: `${element.duration}s`
-            }}
-          />
-        ))}
+    <div className="min-h-screen bg-neutral-950 relative overflow-hidden">
+      {/* Background Grid */}
+      <div className="fixed inset-0 opacity-30">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-950/50 via-secondary-950/30 to-accent-950/50"></div>
+        <div className="grid grid-cols-20 grid-rows-20 w-full h-full">
+          {backgroundElements.map((element, i) => (
+            <div
+              key={i}
+              className="border border-primary-500/10 animate-pulse"
+              style={{
+                animationDelay: `${element.delay}s`,
+                animationDuration: `${element.duration}s`
+              }}
+            />
+          ))}
+        </div>
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 py-12">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 py-12">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400 mb-4">
-            vibe check time friend ✨
+        <div className="text-center mb-12">
+          <h1 className="text-5xl md:text-7xl font-black mb-6">
+            <span className="holographic-text">Vibe Check</span>
           </h1>
-          <p className="text-lg text-white/80">
-            question {currentQuestion + 1} of {quizQuestions.length} - just be honest fam
+          <p className="text-xl md:text-2xl text-neutral-300">
+            Question {currentQuestion + 1} of {quizQuestions.length}
           </p>
         </div>
 
         {/* Progress bar */}
-        <div className="mb-8">
-          <div className="bg-white/10 rounded-full h-3 overflow-hidden backdrop-blur-sm">
+        <div className="mb-12">
+          <div className="glass-card p-2 mb-4">
             <div 
-              className="h-full bg-gradient-to-r from-cyan-400 to-pink-400 transition-all duration-500 ease-out rounded-full"
+              className="h-4 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full transition-all duration-700 ease-out"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
-          <p className="text-center text-white/60 mt-2 text-sm">
-            {Math.round(progress)}% complete - you're doing great! 💪
+          <p className="text-center text-neutral-400">
+            {Math.round(progress)}% complete • You're doing amazing
           </p>
         </div>
 
         {/* Question Card */}
-        <Card className="glass-card border-0 shadow-2xl mb-8">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl md:text-3xl font-bold text-white text-center leading-relaxed">
+        <div className="glass-card p-8 md:p-12 mb-12">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white leading-relaxed">
               {currentQ?.question}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {currentQ?.options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleAnswerSelect(currentQ.id, option.points)}
-                  className={`w-full p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-105 text-left ${
-                    answers[currentQ.id] === option.points
-                      ? 'border-pink-400 bg-pink-400/20 scale-105'
-                      : 'border-white/20 bg-white/5 hover:border-white/40 hover:bg-white/10'
-                  }`}
-                >
-                  <p className="text-white font-medium text-lg">{option.text}</p>
-                  <p className="text-white/60 text-sm mt-2">
+            </h2>
+          </div>
+          
+          <div className="space-y-6">
+            {currentQ?.options.map((option, index) => (
+              <button
+                key={index}
+                onClick={() => handleAnswerSelect(currentQ.id, option.points)}
+                className={`w-full p-6 md:p-8 rounded-xl border-2 transition-all duration-300 text-left group ${
+                  answers[currentQ.id] === option.points
+                    ? 'border-primary-400 bg-primary-400/20 scale-[1.02]'
+                    : 'border-white/20 bg-white/5 hover:border-primary-400/50 hover:bg-white/10 hover:scale-[1.01]'
+                }`}
+              >
+                <p className="text-white font-semibold text-lg md:text-xl mb-3 group-hover:text-primary-300 transition-colors">
+                  {option.text}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-400 text-sm">
                     {option.points > 0 ? `+${option.points}` : option.points} points
-                  </p>
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                  </span>
+                  <div className={`w-6 h-6 rounded-full border-2 transition-all duration-300 ${
+                    answers[currentQ.id] === option.points
+                      ? 'border-primary-400 bg-primary-400'
+                      : 'border-white/30 group-hover:border-primary-400'
+                  }`}>
+                    {answers[currentQ.id] === option.points && (
+                      <div className="w-2 h-2 bg-white rounded-full m-1"></div>
+                    )}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Navigation */}
         <div className="flex justify-between items-center">
-          <Button
+          <button
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
-            variant="outline"
-            className="bg-white/10 border-white/30 text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed py-3 px-6 rounded-full font-bold"
+            className="btn-secondary disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            ← back
-          </Button>
+            ← Previous
+          </button>
 
-          <div className="text-white/60 text-sm">
-            {canProceed ? "looking good friend! 👀" : "pick an answer to continue ✨"}
+          <div className="text-neutral-400 text-center hidden md:block">
+            {canProceed ? "Great choice! Ready to continue?" : "Please select an answer to proceed"}
           </div>
 
-          <Button
+          <button
             onClick={handleNext}
             disabled={!canProceed || loading}
-            className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                <span>calculating...</span>
+              <div className="flex items-center space-x-3">
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span>Calculating...</span>
               </div>
             ) : currentQuestion === quizQuestions.length - 1 ? (
-              'get my vibe! ✨'
+              'Reveal My Vibe ✨'
             ) : (
-              'next →'
+              'Next →'
             )}
-          </Button>
+          </button>
         </div>
 
         {/* Motivational text */}
-        <div className="text-center mt-8">
-          <p className="text-white/50 text-sm">
-            no wrong answers friend, just vibe with it 💫
+        <div className="text-center mt-12">
+          <p className="text-neutral-500">
+            There are no wrong answers • Trust your instincts ✨
           </p>
         </div>
       </div>

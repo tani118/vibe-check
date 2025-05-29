@@ -11,49 +11,60 @@ const SignUpPage = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [selectedAvatar, setSelectedAvatar] = useState('👤')
+  const [selectedAvatar, setSelectedAvatar] = useState('😊')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
   // Generate stable random values for background elements
   const [backgroundElements] = useState(() => 
-    Array.from({ length: 15 }).map((_, i) => ({
+    Array.from({ length: 12 }).map((_, i) => ({
       left: Math.random() * 100,
       top: Math.random() * 100,
-      width: Math.random() * 80 + 20,
-      height: Math.random() * 80 + 20,
-      color: ['#08D9D680', '#FF2E6380', '#FFD70080'][Math.floor(Math.random() * 3)],
-      delay: Math.random() * 2,
-      duration: Math.random() * 3 + 2
+      width: Math.random() * 150 + 100,
+      height: Math.random() * 150 + 100,
+      color: ['rgba(139, 92, 246, 0.03)', 'rgba(16, 185, 129, 0.03)', 'rgba(245, 101, 101, 0.03)', 'rgba(59, 130, 246, 0.03)'][Math.floor(Math.random() * 4)],
+      delay: Math.random() * 3,
+      duration: Math.random() * 12 + 8
+    }))
+  )
+  
+  // Generate floating particles
+  const [particles] = useState(() => 
+    Array.from({ length: 25 }).map((_, i) => ({
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      size: Math.random() * 3 + 1,
+      delay: Math.random() * 4,
+      duration: Math.random() * 15 + 10
     }))
   )
   
   const navigate = useNavigate()
   const { login } = useAuth()
 
-  const avatars = ['👤', '😎', '🤩', '😍', '🥳', '🦄', '👑', '✨']
+  const avatars = ['😊', '😎', '🤩', '😍', '🥳', '🦄', '👑', '✨', '🌟', '💫', '🔥', '💎', '🚀', '💯', '🎯', '⭐', '🎨', '🎭', '🎪', '🎨']
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
     if (!username.trim()) {
-      setError('friend u need a username 💅')
+      setError('username is required ✨')
       return
     }
 
     if (!email.trim()) {
-      setError('email is giving required energy ✉️')
+      setError('email is required 📧')
       return
     }
 
     if (password !== confirmPassword) {
-      setError('passwords aren\'t matching the vibe 😔')
+      setError('passwords don\'t match 😔')
       return
     }
 
     if (password.length < 6) {
-      setError('password needs to be at least 6 characters friend 🔒')
+      setError('password needs to be at least 6 characters 🔒')
       return
     }
 
@@ -65,23 +76,23 @@ const SignUpPage = () => {
         login(result.user)
         navigate('/home')
       } else {
-        setError(result.error || 'failed to create account friend 💔')
+        setError(result.error || 'failed to create account 💔')
       }
     } catch (err) {
-      setError(err.message || 'something went wrong friend, try again 💔')
+      setError(err.message || 'something went wrong, try again 💔')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-black relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0">
         {backgroundElements.map((element, i) => (
           <div
             key={i}
-            className="absolute rounded-full animate-pulse"
+            className="absolute rounded-full opacity-30 animate-float"
             style={{
               left: `${element.left}%`,
               top: `${element.top}%`,
@@ -95,101 +106,81 @@ const SignUpPage = () => {
         ))}
       </div>
 
-      {/* Floating emojis */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-[10%] text-4xl animate-float">⚡</div>
-        <div className="absolute top-32 right-[15%] text-3xl animate-bounce">✨</div>
-        <div className="absolute bottom-40 left-[20%] text-4xl animate-wiggle">🔥</div>
-        <div className="absolute bottom-20 right-[25%] text-3xl animate-pulse">🌟</div>
+      {/* Floating particles */}
+      <div className="absolute inset-0">
+        {particles.map((particle, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-white/5 animate-float-slow"
+            style={{
+              left: `${particle.left}%`,
+              top: `${particle.top}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              animationDelay: `${particle.delay}s`,
+              animationDuration: `${particle.duration}s`
+            }}
+          />
+        ))}
       </div>
 
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-6 py-12">
-        <div className="w-full max-w-md">
+      {/* Navigation */}
+      <nav className="relative z-10 glass-card border-0 border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div 
+            onClick={() => navigate('/')}
+            className="text-2xl font-black holographic-text cursor-pointer hover:opacity-80 transition-opacity duration-300"
+          >
+            vibe checker
+          </div>
+          <Link to="/login" className="btn-ghost text-white/80 hover:text-white font-medium">
+            already have an account?
+          </Link>
+        </div>
+      </nav>
+
+      {/* Main content */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-lg">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400 mb-4 glitch">
+          <div className="text-center mb-12">
+            <div className="mb-6 text-8xl animate-bounce-slow">✨</div>
+            <h1 className="text-6xl font-black gradient-text mb-4 animate-fade-in">
               join the vibe
             </h1>
-            <p className="text-lg text-white/80 font-medium">
-              create your account and start vibing ✨
+            <p className="text-white/70 text-xl animate-fade-in-delay">
+              start your authentic journey and discover your true vibe
             </p>
           </div>
 
-          <Card className="glass-card border-0 shadow-2xl">
-            <CardHeader className="space-y-1 pb-6">
-              <CardTitle className="text-2xl font-bold text-center text-white">
-                let's get you set up friend 💫
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {error && (
-                  <div className="bg-red-500/20 border border-red-500/50 text-red-200 px-4 py-3 rounded-xl text-center backdrop-blur-sm">
-                    {error}
+          {/* Sign up form */}
+          <div className="glass-card rounded-3xl p-8 bg-gradient-to-b from-purple-900/20 to-pink-900/20 hover:from-purple-900/30 hover:to-pink-900/30 transition-all duration-500">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {error && (
+                <div className="glass-card bg-red-900/30 border border-red-500/30 rounded-2xl p-4 text-red-300 text-center animate-shake">
+                  <div className="flex items-center justify-center space-x-2">
+                    <span className="text-xl">⚠️</span>
+                    <span>{error}</span>
                   </div>
-                )}
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/90">username (make it iconic)</label>
-                  <Input
-                    type="text"
-                    placeholder="authentic_energy"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-pink-400 focus:ring-pink-400/50 rounded-xl h-12"
-                    required
-                  />
                 </div>
+              )}
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/90">email (we won't spam friend)</label>
-                  <Input
-                    type="email"
-                    placeholder="fam@vibecheck.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-pink-400 focus:ring-pink-400/50 rounded-xl h-12"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/90">password (keep it secure fam)</label>
-                  <Input
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-pink-400 focus:ring-pink-400/50 rounded-xl h-12"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/90">confirm password</label>
-                  <Input
-                    type="password"
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-pink-400 focus:ring-pink-400/50 rounded-xl h-12"
-                    required
-                  />
-                </div>
-
-                {/* Avatar Selection */}
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-white/90">choose your avatar vibe</label>
-                  <div className="grid grid-cols-4 gap-3">
+              <div>
+                <label className="block text-white font-semibold mb-4 text-lg flex items-center">
+                  <span className="mr-2">🎭</span>
+                  choose your vibe avatar
+                </label>
+                <div className="glass-card rounded-2xl p-4 bg-black/20">
+                  <div className="grid grid-cols-6 gap-3">
                     {avatars.map((avatar) => (
                       <button
                         key={avatar}
                         type="button"
                         onClick={() => setSelectedAvatar(avatar)}
-                        className={`text-3xl p-3 rounded-xl border-2 transition-all duration-300 transform hover:scale-110 ${
-                          selectedAvatar === avatar
-                            ? 'border-pink-400 bg-pink-400/20 scale-110'
-                            : 'border-white/20 bg-white/5 hover:border-white/40'
+                        className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-300 hover:opacity-80 ${
+                          selectedAvatar === avatar 
+                            ? 'bg-gradient-to-r from-cyan-400 to-pink-400 shadow-lg shadow-cyan-400/50 scale-110' 
+                            : 'bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/30'
                         }`}
                       >
                         {avatar}
@@ -197,45 +188,111 @@ const SignUpPage = () => {
                     ))}
                   </div>
                 </div>
+              </div>
 
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 border-2 border-white/20 shadow-xl"
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center space-x-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>creating your vibe...</span>
-                    </div>
-                  ) : (
-                    'periodt let\'s go ✨'
-                  )}
-                </Button>
-              </form>
+              <div className="space-y-4">
+                <div className="relative group">
+                  <input
+                    type="text"
+                    placeholder="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full bg-black/30 border border-white/20 rounded-xl pl-12 pr-4 py-4 text-white placeholder-white/50 text-lg backdrop-blur-sm focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 group-hover:border-white/30"
+                    required
+                  />
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 text-lg pointer-events-none">
+                    👤
+                  </div>
+                </div>
 
-              <div className="mt-6 text-center">
-                <p className="text-white/70">
-                  already part of the vibe family?{' '}
-                  <Link
-                    to="/login"
-                    className="text-pink-400 font-semibold hover:text-pink-300 transition-colors underline decoration-2 underline-offset-4"
-                  >
-                    sign in friend
+                <div className="relative group">
+                  <input
+                    type="email"
+                    placeholder="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-black/30 border border-white/20 rounded-xl pl-12 pr-4 py-4 text-white placeholder-white/50 text-lg backdrop-blur-sm focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 group-hover:border-white/30"
+                    required
+                  />
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 text-lg pointer-events-none">
+                    📧
+                  </div>
+                </div>
+
+                <div className="relative group">
+                  <input
+                    type="password"
+                    placeholder="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-black/30 border border-white/20 rounded-xl pl-12 pr-4 py-4 text-white placeholder-white/50 text-lg backdrop-blur-sm focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 group-hover:border-white/30"
+                    required
+                  />
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 text-lg pointer-events-none">
+                    🔒
+                  </div>
+                </div>
+
+                <div className="relative group">
+                  <input
+                    type="password"
+                    placeholder="confirm password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-black/30 border border-white/20 rounded-xl pl-12 pr-4 py-4 text-white placeholder-white/50 text-lg backdrop-blur-sm focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 transition-all duration-300 group-hover:border-white/30"
+                    required
+                  />
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 text-lg pointer-events-none">
+                    🔒
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full btn-primary h-14 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>creating your vibe...</span>
+                  </div>
+                ) : (
+                  <>
+                    <span className="relative z-10">create account ✨</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-1000"></div>
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-8 text-center">
+              <div className="glass-card rounded-2xl p-4 bg-gradient-to-r from-blue-900/10 to-purple-900/10">
+                <p className="text-white/70 text-lg">
+                  already part of the vibe? {' '}
+                  <Link to="/login" className="text-cyan-400 hover:text-cyan-300 font-semibold hover:underline transition-all duration-300">
+                    sign in here
                   </Link>
                 </p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Back to home */}
-          <div className="mt-6 text-center">
-            <Link
-              to="/"
-              className="text-white/60 hover:text-white/80 transition-colors text-sm"
-            >
-              ← back to the landing page
-            </Link>
+          {/* Feature highlights */}
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div className="glass-card rounded-xl p-4 bg-gradient-to-br from-cyan-900/10 to-blue-900/10">
+              <div className="text-2xl mb-2">🎯</div>
+              <p className="text-white/70 text-sm">authentic vibes</p>
+            </div>
+            <div className="glass-card rounded-xl p-4 bg-gradient-to-br from-purple-900/10 to-pink-900/10">
+              <div className="text-2xl mb-2">🌟</div>
+              <p className="text-white/70 text-sm">personalized journey</p>
+            </div>
+            <div className="glass-card rounded-xl p-4 bg-gradient-to-br from-green-900/10 to-emerald-900/10">
+              <div className="text-2xl mb-2">💫</div>
+              <p className="text-white/70 text-sm">vibe community</p>
+            </div>
           </div>
         </div>
       </div>

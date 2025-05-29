@@ -60,11 +60,19 @@ const HomePage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-black flex items-center justify-center">
-        <div className="glass-card p-8 rounded-3xl">
-          <div className="flex items-center space-x-4">
-            <div className="w-8 h-8 border-4 border-pink-400/30 border-t-pink-400 rounded-full animate-spin"></div>
-            <div className="text-white text-xl font-bold">loading your authentic moment...</div>
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center relative overflow-hidden">
+        {/* Loading background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-950/50 via-secondary-950/30 to-accent-950/50"></div>
+        
+        <div className="glass-card p-12 relative z-10">
+          <div className="flex flex-col items-center space-y-6">
+            <div className="relative">
+              <div className="w-16 h-16 border-4 border-primary-500/30 border-t-primary-400 rounded-full animate-spin"></div>
+              <div className="absolute inset-0 w-16 h-16 border-4 border-secondary-500/20 border-b-secondary-400 rounded-full animate-spin animate-reverse"></div>
+            </div>
+            <div className="text-white text-2xl font-bold holographic-text">
+              Loading your energy...
+            </div>
           </div>
         </div>
       </div>
@@ -72,183 +80,199 @@ const HomePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-purple-950 to-pink-950 relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0">
-        {backgroundElements.map((element, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full animate-pulse"
-            style={{
-              left: `${element.left}%`,
-              top: `${element.top}%`,
-              width: `${element.width}px`,
-              height: `${element.height}px`,
-              background: `radial-gradient(circle, ${element.color}, transparent)`,
-              animationDelay: `${element.delay}s`,
-              animationDuration: `${element.duration}s`
-            }}
-          />
-        ))}
+    <div className="min-h-screen bg-neutral-950 relative overflow-hidden">
+      {/* Background Grid */}
+      <div className="fixed inset-0 opacity-20">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-950/30 via-secondary-950/20 to-accent-950/30"></div>
+        <div className="grid grid-cols-20 grid-rows-20 w-full h-full">
+          {backgroundElements.map((element, i) => (
+            <div
+              key={i}
+              className="border border-primary-500/10 animate-pulse"
+              style={{
+                animationDelay: `${element.delay}s`,
+                animationDuration: `${element.duration}s`
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 bg-black/30 backdrop-blur-xl border-b border-white/20">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400">
-            vibe checker
-          </h1>
-          <div className="flex items-center space-x-6">
-            <div className="text-white/90 font-medium">
-              hey {user?.username || 'friend'}! {user?.avatar || '👋'}
+      <nav className="relative z-10 glass-nav border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+          <div className="text-3xl font-bold holographic-text">
+            VibeCheck
+          </div>
+          <div className="flex items-center space-x-8">
+            <div className="hidden md:flex items-center text-white/90 font-medium text-lg">
+              <span className="mr-3 text-2xl">{user?.avatar || '👋'}</span>
+              Welcome back, {user?.username || 'friend'}
             </div>
-            <Button onClick={() => navigate('/profile')} variant="ghost" className="text-white hover:text-pink-400 font-medium">
-              profile
-            </Button>
-            <Button onClick={() => navigate('/users')} variant="ghost" className="text-white hover:text-cyan-400 font-medium">
-              community
-            </Button>
-            <Button onClick={logout} className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold rounded-full px-4 py-2">
-              peace out ✌️
-            </Button>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => navigate('/profile')}
+                className="btn-ghost"
+              >
+                Profile
+              </button>
+              <button
+                onClick={() => navigate('/users')}
+                className="btn-ghost"
+              >
+                Community
+              </button>
+              <button
+                onClick={logout}
+                className="btn-secondary"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
-      <div className="relative z-10 max-w-6xl mx-auto p-6 pt-12">
+      <div className="relative z-10 max-w-7xl mx-auto p-6 pt-12">
         {/* Welcome Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-400 mb-4">
-            your dashboard
-          </h2>
-          <p className="text-xl text-white/80 font-medium">
-            time to check your authentic energy friend ✨
+        <div className="text-center mb-16">
+          <h1 className="text-6xl md:text-8xl font-black mb-6">
+            <span className="holographic-text">Your Dashboard</span>
+          </h1>
+          <p className="text-2xl text-neutral-300 max-w-3xl mx-auto">
+            Monitor your energy, track your growth, connect with your community
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-8 mb-16">
           {/* Current Vibe Card */}
           <div className="lg:col-span-1">
-            <Card className="glass-card border-0 shadow-2xl">
-              <CardHeader className="text-center pb-6">
-                <CardTitle className="text-2xl font-bold text-white">your current vibe</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
+            <div className="glass-card h-full p-8">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-8">Current Vibe</h2>
+                
                 {currentVibe ? (
-                  <div>
-                    <div className="text-8xl mb-6 animate-bounce">{currentVibe.emoji}</div>
-                    <h3 className="text-3xl font-bold text-white mb-4 gradient-text">{currentVibe.vibe}</h3>
-                    <div className="bg-white/10 rounded-xl p-4 mb-4 backdrop-blur-sm">
-                      <p className="text-white/90 text-lg mb-2">vibe score: <span className="font-bold text-cyan-400">{currentVibe.score}/50</span></p>
-                      <p className="text-white/60 text-sm">
-                        last vibe check: {new Date(currentVibe.updated_at).toLocaleDateString()}
-                      </p>
+                  <div className="space-y-6">
+                    <div className="text-8xl mb-6 animate-float">{currentVibe.emoji}</div>
+                    <h3 className="text-3xl font-bold gradient-text mb-4">{currentVibe.vibe}</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="glass-card p-4">
+                        <div className="text-3xl font-bold text-primary-400 mb-2">{currentVibe.score}/50</div>
+                        <div className="text-neutral-400 text-sm">Vibe Score</div>
+                      </div>
+                      
+                      <div className="text-neutral-400 text-sm">
+                        Last updated: {new Date(currentVibe.updated_at).toLocaleDateString()}
+                      </div>
                     </div>
-                    <Button
+
+                    <button
                       onClick={() => navigate('/quiz')}
-                      className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105"
+                      className="btn-primary w-full"
                     >
-                      retake quiz ✨
-                    </Button>
+                      Retake Quiz
+                    </button>
                   </div>
                 ) : (
-                  <div>
-                    <div className="text-8xl mb-6 animate-wiggle">❓</div>
-                    <h3 className="text-2xl font-bold text-white mb-4">no vibe detected friend!</h3>
-                    <p className="text-white/70 mb-6">time to take the quiz and find your energy ✨</p>
-                    <Button
+                  <div className="space-y-6">
+                    <div className="text-8xl mb-6 animate-bounce">❓</div>
+                    <h3 className="text-2xl font-bold text-white mb-4">No Vibe Detected</h3>
+                    <p className="text-neutral-300 mb-6">Ready to discover your authentic energy?</p>
+                    <button
                       onClick={() => navigate('/quiz')}
-                      className="bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-110 text-lg"
+                      className="btn-primary w-full text-lg py-4"
                     >
-                      let's check my vibe! 🚀
-                    </Button>
+                      Take the Quiz
+                    </button>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
-          {/* Take Quiz CTA */}
+          {/* Quiz CTA */}
           <div className="lg:col-span-2">
-            <Card className="glass-card border-0 shadow-2xl h-full">
-              <CardContent className="flex flex-col justify-center items-center h-full p-8 text-center">
-                <div className="text-8xl mb-6 animate-float">🎯</div>
-                <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400 mb-6">
-                  {currentVibe ? 'feeling different?' : 'ready to discover yourself?'}
-                </h2>
-                <p className="text-white/80 text-xl mb-8 max-w-md leading-relaxed">
-                  {currentVibe 
-                    ? 'vibes change friend! retake the quiz to update your energy 💫'
-                    : 'take our iconic 10-question quiz to find your current authentic energy ✨'
-                  }
-                </p>
-                <Button 
-                  onClick={() => navigate('/quiz')}
-                  className="h-14 px-8 text-lg font-semibold bg-teal hover:bg-teal/90"
-                >
-                  {currentVibe ? 'Retake Quiz ✨' : 'Start Quiz ✨'}
-                </Button>
-              </CardContent>
-            </Card>
+            <div className="glass-card h-full p-8 flex flex-col justify-center items-center text-center">
+              <div className="text-8xl mb-8 animate-float">🎯</div>
+              <h2 className="text-4xl font-black gradient-text mb-6">
+                {currentVibe ? 'Feeling Different?' : 'Ready to Begin?'}
+              </h2>
+              <p className="text-xl text-neutral-300 mb-8 max-w-lg leading-relaxed">
+                {currentVibe 
+                  ? 'Your energy evolves every day. Update your vibe to reflect your current state.'
+                  : 'Discover your authentic energy through our scientifically-designed personality assessment.'
+                }
+              </p>
+              <button 
+                onClick={() => navigate('/quiz')}
+                className="btn-primary text-xl px-12 py-6"
+              >
+                {currentVibe ? 'Update My Vibe' : 'Start the Journey'}
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Starred Users Section */}
-        <div className="mt-12">
-          <Card className="glass-card border-0 shadow-2xl">
-            <CardHeader className="text-center">
-              <CardTitle className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-400 flex items-center justify-center">
-                <span className="mr-3 text-4xl animate-wiggle">⭐</span>
-                your friends' vibes
-              </CardTitle>
-              <p className="text-white/70 text-lg">check what energy your starred homies are bringing ✨</p>
-            </CardHeader>
-            <CardContent>
-              {starredUsers.length > 0 ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {starredUsers.map((starredUser) => {
-                    const userVibe = starredUser.current_vibes?.[0]
-                    const vibeInfo = userVibe ? getVibeFromScore(userVibe.score) : null
+        <div className="glass-card p-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black gradient-text mb-4 flex items-center justify-center">
+              <span className="mr-4 text-5xl animate-pulse">⭐</span>
+              Your Community
+            </h2>
+            <p className="text-xl text-neutral-300">Stay connected with the vibes that matter</p>
+          </div>
+
+          {starredUsers.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {starredUsers.map((starredUser) => {
+                const userVibe = starredUser.current_vibes?.[0]
+                const vibeInfo = userVibe ? getVibeFromScore(userVibe.score) : null
+                
+                return (
+                  <div 
+                    key={starredUser.starred_user_id} 
+                    className="glass-card p-6 text-center group hover:opacity-90 transition-all duration-300"
+                  >
+                    <div className="text-4xl mb-4 group-hover:animate-bounce transition-all duration-300">
+                      {starredUser.users.avatar}
+                    </div>
+                    <h4 className="font-bold text-white text-lg mb-4">{starredUser.users.username}</h4>
                     
-                    return (
-                      <div key={starredUser.starred_user_id} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:border-pink-400/50 transition-all duration-300 transform hover:scale-105">
-                        <div className="text-center">
-                          <div className="text-4xl mb-3 animate-float">{starredUser.users.avatar}</div>
-                          <h4 className="font-bold text-white text-lg mb-2">{starredUser.users.username}</h4>
-                          {vibeInfo ? (
-                            <div className="space-y-2">
-                              <div className="text-3xl animate-bounce">{vibeInfo.emoji}</div>
-                              <div className="text-cyan-400 font-semibold">{vibeInfo.vibe}</div>
-                              <div className="text-white/60 text-sm">
-                                score: {userVibe.score}/50
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="space-y-2">
-                              <div className="text-3xl animate-pulse">❓</div>
-                              <span className="text-white/60 text-sm">no vibe yet friend!</span>
-                            </div>
-                          )}
+                    {vibeInfo ? (
+                      <div className="space-y-3">
+                        <div className="text-3xl">{vibeInfo.emoji}</div>
+                        <div className="text-primary-400 font-semibold">{vibeInfo.vibe}</div>
+                        <div className="text-neutral-400 text-sm">
+                          Score: {userVibe.score}/50
                         </div>
                       </div>
-                    )
-                  })}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <div className="text-8xl mb-6 animate-wiggle">👥</div>
-                  <h3 className="text-2xl font-bold text-white mb-4">no friends starred yet!</h3>
-                  <p className="text-white/70 mb-8 text-lg">go find some iconic people to follow their vibes 💫</p>
-                  <Button 
-                    onClick={() => navigate('/users')}
-                    className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-110"
-                  >
-                    explore the community ✨
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="text-3xl opacity-50">❓</div>
+                        <span className="text-neutral-400 text-sm">No vibe yet</span>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="text-8xl mb-8 animate-bounce">👥</div>
+              <h3 className="text-3xl font-bold text-white mb-6">No Friends Starred Yet</h3>
+              <p className="text-xl text-neutral-300 mb-8 max-w-md mx-auto leading-relaxed">
+                Discover amazing people in the community and follow their vibe journey
+              </p>
+              <button 
+                onClick={() => navigate('/users')}
+                className="btn-primary text-lg px-8 py-4"
+              >
+                Explore Community
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

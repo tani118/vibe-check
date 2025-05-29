@@ -1,6 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './hooks/useAuth'
+import { LoadingSpinner } from './components/ui/loading'
+import PreloadManager from './components/PreloadManager'
 import LandingPage from './pages/LandingPage'
 import SignUpPage from './pages/SignUpPage'
 import LoginPage from './pages/LoginPage'
@@ -8,6 +10,7 @@ import HomePage from './pages/HomePage'
 import QuizPage from './pages/QuizPage'
 import ProfilePage from './pages/ProfilePage'
 import UsersPage from './pages/UsersPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -15,8 +18,11 @@ const ProtectedRoute = ({ children }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal via-blue-400 to-purple-500 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+      <div className="min-h-screen cosmic-bg flex items-center justify-center">
+        <div className="glass-card p-8 rounded-2xl flex flex-col items-center space-y-4">
+          <LoadingSpinner size="xl" />
+          <p className="text-white text-lg font-medium">Loading your vibe...</p>
+        </div>
       </div>
     )
   }
@@ -30,8 +36,11 @@ const PublicRoute = ({ children }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal via-blue-400 to-purple-500 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+      <div className="min-h-screen cosmic-bg flex items-center justify-center">
+        <div className="glass-card p-8 rounded-2xl flex flex-col items-center space-y-4">
+          <LoadingSpinner size="xl" />
+          <p className="text-white text-lg font-medium">Checking your vibe...</p>
+        </div>
       </div>
     )
   }
@@ -42,6 +51,7 @@ const PublicRoute = ({ children }) => {
 function App() {
   return (
     <AuthProvider>
+      <PreloadManager />
       <Router>
         <div className="App">
           <Routes>
@@ -57,7 +67,7 @@ function App() {
             <Route path="/users" element={<ProtectedRoute><UsersPage /></ProtectedRoute>} />
             
             {/* Catch all route */}
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
       </Router>

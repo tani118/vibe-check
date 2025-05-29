@@ -7,7 +7,7 @@ import { useAuth } from '../hooks/useAuth'
 import { getUserVibeHistory, updateUserProfile } from '../lib/database'
 import { getVibeFromScore } from '../lib/quiz'
 
-const avatarOptions = ['😊', '😎', '🤗', '😄', '🥳', '😇', '🤠', '🥰', '😋', '🤩', '😌', '🙃']
+const avatarOptions = ['😊', '😎', '🤗', '😄', '🥳', '😇', '🤠', '🥰', '😋', '🤩', '😌', '🙃', '💫', '✨', '🌟', '💎', '🔥', '💯', '🎯', '🚀']
 
 const ProfilePage = () => {
   const [vibeHistory, setVibeHistory] = useState([])
@@ -21,11 +21,22 @@ const ProfilePage = () => {
     Array.from({ length: 15 }).map((_, i) => ({
       left: Math.random() * 100,
       top: Math.random() * 100,
-      width: Math.random() * 60 + 20,
-      height: Math.random() * 60 + 20,
-      color: ['#08D9D640', '#FF2E6340', '#FFD70040', '#9D4EDD40'][Math.floor(Math.random() * 4)],
+      width: Math.random() * 120 + 80,
+      height: Math.random() * 120 + 80,
+      color: ['rgba(139, 92, 246, 0.03)', 'rgba(16, 185, 129, 0.03)', 'rgba(245, 101, 101, 0.03)', 'rgba(59, 130, 246, 0.03)'][Math.floor(Math.random() * 4)],
       delay: Math.random() * 3,
-      duration: Math.random() * 5 + 3
+      duration: Math.random() * 15 + 10
+    }))
+  )
+  
+  // Generate floating particles
+  const [particles] = useState(() => 
+    Array.from({ length: 30 }).map((_, i) => ({
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      size: Math.random() * 4 + 2,
+      delay: Math.random() * 5,
+      duration: Math.random() * 20 + 15
     }))
   )
   
@@ -68,11 +79,30 @@ const ProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-900 to-black flex items-center justify-center">
-        <div className="glass-card p-8 rounded-3xl">
+      <div className="min-h-screen bg-gradient-to-br from-black via-purple-950 to-pink-950 relative overflow-hidden flex items-center justify-center">
+        {/* Animated background */}
+        <div className="absolute inset-0">
+          {backgroundElements.map((element, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full opacity-30 animate-float"
+              style={{
+                left: `${element.left}%`,
+                top: `${element.top}%`,
+                width: `${element.width}px`,
+                height: `${element.height}px`,
+                background: `radial-gradient(circle, ${element.color}, transparent)`,
+                animationDelay: `${element.delay}s`,
+                animationDuration: `${element.duration}s`
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="glass-card p-8 rounded-3xl relative z-10">
           <div className="flex items-center space-x-4">
-            <div className="w-8 h-8 border-4 border-pink-400/30 border-t-pink-400 rounded-full animate-spin"></div>
-            <div className="text-white text-xl font-bold">loading your profile friend...</div>
+            <div className="w-8 h-8 border-4 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin"></div>
+            <div className="text-white text-xl font-semibold">loading your profile...</div>
           </div>
         </div>
       </div>
@@ -80,13 +110,13 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-purple-950 to-pink-950 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0">
         {backgroundElements.map((element, i) => (
           <div
             key={i}
-            className="absolute rounded-full animate-pulse"
+            className="absolute rounded-full opacity-30 animate-float"
             style={{
               left: `${element.left}%`,
               top: `${element.top}%`,
@@ -100,170 +130,251 @@ const ProfilePage = () => {
         ))}
       </div>
 
+      {/* Floating particles */}
+      <div className="absolute inset-0">
+        {particles.map((particle, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-white/10 animate-float-slow"
+            style={{
+              left: `${particle.left}%`,
+              top: `${particle.top}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              animationDelay: `${particle.delay}s`,
+              animationDuration: `${particle.duration}s`
+            }}
+          />
+        ))}
+      </div>
+
       {/* Navigation */}
-      <nav className="relative z-10 bg-black/30 backdrop-blur-xl border-b border-white/20">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400">
+      <nav className="relative z-10 glass-card border-0 border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div 
+            onClick={() => navigate('/')}
+            className="text-2xl font-black holographic-text cursor-pointer hover:opacity-80 transition-opacity duration-300"
+          >
             vibe checker
-          </h1>
+          </div>
           <div className="flex items-center space-x-6">
-            <Button onClick={() => navigate('/home')} variant="ghost" className="text-white hover:text-cyan-400 font-medium">
+            <button 
+              onClick={() => navigate('/home')} 
+              className="btn-ghost text-white/80 hover:text-white font-medium"
+            >
               home
-            </Button>
-            <Button onClick={() => navigate('/users')} variant="ghost" className="text-white hover:text-pink-400 font-medium">
+            </button>
+            <button 
+              onClick={() => navigate('/quiz')} 
+              className="btn-ghost text-white/80 hover:text-white font-medium"
+            >
+              take quiz
+            </button>
+            <button 
+              onClick={() => navigate('/users')} 
+              className="btn-ghost text-white/80 hover:text-white font-medium"
+            >
               community
-            </Button>
+            </button>
           </div>
         </div>
       </nav>
 
-      <div className="relative z-10 max-w-4xl mx-auto p-6 pt-12">
-        {/* Page Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-400 mb-4">
-            your profile
-          </h2>
-          <p className="text-xl text-white/80 font-medium">
-            this is your authentic moment ✨
-          </p>
+      {/* Main content */}
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-12">
+        {/* Profile Header */}
+        <div className="glass-card rounded-3xl p-8 mb-8 bg-gradient-to-r from-purple-900/20 to-pink-900/20 hover:from-purple-900/30 hover:to-pink-900/30 transition-all duration-500">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-6">
+              <div className="relative group">
+                <div className="w-24 h-24 bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 rounded-full flex items-center justify-center text-4xl relative overflow-hidden group-hover:opacity-90 transition-all duration-300">
+                  {selectedAvatar || user.avatar}
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full border-4 border-slate-900 animate-pulse shadow-lg shadow-green-400/50"></div>
+              </div>
+              <div>
+                <h1 className="text-4xl font-black gradient-text mb-2">
+                  {editing ? (
+                    <input
+                      value={newUsername}
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      className="bg-black/30 border border-white/20 rounded-xl px-4 py-2 text-white text-4xl font-black backdrop-blur-sm focus:border-cyan-400 focus:outline-none transition-colors duration-300"
+                      placeholder="your username"
+                    />
+                  ) : (
+                    user.username
+                  )}
+                </h1>
+                <p className="text-white/70 text-lg mb-2">member since forever ago ✨</p>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-green-400 font-medium">online & vibing</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex space-x-3">
+              {editing ? (
+                <>
+                  <button onClick={handleSaveProfile} className="btn-primary">
+                    save profile
+                  </button>
+                  <button onClick={() => setEditing(false)} className="btn-secondary">
+                    cancel
+                  </button>
+                </>
+              ) : (
+                <button onClick={() => setEditing(true)} className="btn-primary">
+                  edit profile
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Avatar selection during editing */}
+          {editing && (
+            <div className="mt-8 p-6 glass-card bg-black/20 rounded-2xl">
+              <h3 className="text-white text-lg font-semibold mb-4 flex items-center">
+                <span className="mr-2">✨</span>
+                choose your vibe avatar
+              </h3>
+              <div className="grid grid-cols-6 sm:grid-cols-8 lg:grid-cols-10 gap-3">
+                {avatarOptions.map((avatar) => (
+                  <button
+                    key={avatar}
+                    onClick={() => setSelectedAvatar(avatar)}
+                    className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl transition-all duration-300 hover:opacity-80 ${
+                      selectedAvatar === avatar 
+                        ? 'bg-gradient-to-r from-cyan-400 to-pink-400 shadow-lg shadow-cyan-400/50 scale-110' 
+                        : 'bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/30'
+                    }`}
+                  >
+                    {avatar}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-        {/* Profile Section */}
-        <Card className="glass-card border-0 shadow-2xl mb-12">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400 flex items-center justify-center">
-              <span className="mr-3 text-4xl animate-wiggle">👤</span>
-              your authentic info
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {editing ? (
-              <div className="space-y-8">
-                <div>
-                  <label className="block text-lg font-bold text-white mb-3">username friend</label>
-                  <Input
-                    value={newUsername}
-                    onChange={(e) => setNewUsername(e.target.value)}
-                    placeholder="what should we call you?"
-                    className="glass-input text-white placeholder-white/50 border-white/30 focus:border-pink-400 text-lg max-w-sm"
-                  />
-                </div>
 
-                <div>
-                  <label className="block text-lg font-bold text-white mb-4">pick your vibe avatar</label>
-                  <div className="grid grid-cols-6 gap-4 max-w-lg">
-                    {avatarOptions.map((avatar) => (
-                      <button
-                        key={avatar}
-                        onClick={() => setSelectedAvatar(avatar)}
-                        className={`w-16 h-16 text-3xl rounded-2xl border-2 transition-all duration-300 transform hover:scale-110 ${
-                          selectedAvatar === avatar
-                            ? 'border-pink-400 bg-pink-400/20 animate-pulse'
-                            : 'border-white/30 hover:border-cyan-400/50 bg-white/10'
-                        }`}
-                      >
-                        {avatar}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex space-x-4 pt-4">
-                  <Button 
-                    onClick={handleSaveProfile}
-                    className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
-                  >
-                    save changes ✨
-                  </Button>
-                  <Button 
-                    onClick={() => {
-                      setEditing(false)
-                      setNewUsername(user.username)
-                      setSelectedAvatar(user.avatar)
-                    }}
-                    className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 font-bold py-3 px-8 rounded-full border border-white/30"
-                  >
-                    never mind
-                  </Button>
-                </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="glass-card rounded-2xl p-6 bg-gradient-to-br from-blue-900/20 to-cyan-900/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/70 text-sm font-medium">total vibes</p>
+                <p className="text-3xl font-black gradient-text">{vibeHistory.length}</p>
               </div>
-            ) : (
-              <div className="text-center space-y-6">
-                <div className="text-8xl animate-float mb-4">{user.avatar}</div>
-                <div>
-                  <h3 className="text-4xl font-black text-white mb-2">{user.username}</h3>
-                  <p className="text-white/70 text-lg">been vibing since {new Date(user.created_at).toLocaleDateString()} ✨</p>
-                </div>
-                <Button 
-                  onClick={() => setEditing(true)} 
-                  className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
-                >
-                  edit your vibe ✏️
-                </Button>
+              <div className="text-3xl">📊</div>
+            </div>
+          </div>
+          <div className="glass-card rounded-2xl p-6 bg-gradient-to-br from-purple-900/20 to-pink-900/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/70 text-sm font-medium">avg score</p>
+                <p className="text-3xl font-black gradient-text">
+                  {vibeHistory.length > 0 
+                    ? Math.round(vibeHistory.reduce((sum, entry) => sum + entry.score, 0) / vibeHistory.length)
+                    : 0}%
+                </p>
               </div>
-            )}
-          </CardContent>
-        </Card>
+              <div className="text-3xl">🎯</div>
+            </div>
+          </div>
+          <div className="glass-card rounded-2xl p-6 bg-gradient-to-br from-green-900/20 to-emerald-900/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/70 text-sm font-medium">best vibe</p>
+                <p className="text-3xl font-black gradient-text">
+                  {vibeHistory.length > 0 
+                    ? Math.max(...vibeHistory.map(entry => entry.score))
+                    : 0}%
+                </p>
+              </div>
+              <div className="text-3xl">🏆</div>
+            </div>
+          </div>
+        </div>
 
         {/* Vibe History */}
-        <Card className="glass-card border-0 shadow-2xl">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-400 flex items-center justify-center">
-              <span className="mr-3 text-4xl animate-pulse">📊</span>
-              your vibe journey
-            </CardTitle>
-            <p className="text-white/70 text-lg">track how your energy evolved friend ✨</p>
-          </CardHeader>
-          <CardContent>
-            {vibeHistory.length > 0 ? (
-              <div className="space-y-6">
-                {vibeHistory.map((entry) => {
-                  const vibeInfo = getVibeFromScore(entry.score)
-                  return (
-                    <div key={entry.id} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:border-pink-400/50 transition-all duration-300">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-6">
-                          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-400/20 to-purple-400/20 flex items-center justify-center text-4xl animate-float">
-                            {vibeInfo.emoji}
-                          </div>
-                          <div>
-                            <h4 className="text-xl font-bold text-white mb-1">{vibeInfo.vibe}</h4>
-                            <p className="text-cyan-400 font-semibold">score: {entry.score}/50</p>
-                            <p className="text-white/60 text-sm">
-                              {entry.score >= 40 ? 'amazing! you were bringing the energy!' : 
-                               entry.score >= 30 ? 'decent vibes friend' : 
-                               entry.score >= 15 ? 'we\'ve all been there hon' : 
-                               'rough patch but you got this 💪'}
-                            </p>
-                          </div>
+        <div className="glass-card rounded-3xl p-8">
+          <h2 className="text-3xl font-black gradient-text mb-6 flex items-center">
+            <span className="mr-3 text-2xl">📈</span>
+            your vibe journey
+          </h2>
+          
+          {vibeHistory.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="text-8xl mb-6 animate-bounce">🤔</div>
+              <h3 className="text-2xl font-bold text-white mb-4">no vibes recorded yet!</h3>
+              <p className="text-white/70 text-lg mb-8 max-w-md mx-auto">
+                ready to discover your vibe? take your first quiz and start your journey!
+              </p>
+              <button 
+                onClick={() => navigate('/quiz')} 
+                className="btn-primary text-lg px-8 py-4"
+              >
+                take your first quiz
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {vibeHistory.slice(0, 5).map((entry, i) => {
+                const vibe = getVibeFromScore(entry.score)
+                return (
+                  <div 
+                    key={i} 
+                    className="glass-card rounded-2xl p-6 bg-black/20 hover:bg-black/30 transition-all duration-300 hover:scale-[1.02] group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="text-4xl group-hover:opacity-90 transition-all duration-300">
+                          {vibe.emoji}
                         </div>
-                        <div className="text-right">
-                          <p className="text-white/80 font-medium">
-                            {new Date(entry.created_at).toLocaleDateString()}
-                          </p>
-                          <p className="text-white/60 text-sm">
-                            {new Date(entry.created_at).toLocaleTimeString()}
-                          </p>
+                        <div>
+                          <div className="text-xl font-bold text-white group-hover:gradient-text transition-all duration-300">
+                            {vibe.title}
+                          </div>
+                          <div className="text-white/60 text-sm">
+                            {new Date(entry.date).toLocaleDateString('en-US', { 
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </div>
                         </div>
                       </div>
+                      <div className="text-right">
+                        <div className="text-3xl font-black gradient-text">{entry.score}%</div>
+                        <div className="text-white/60 text-sm">vibe score</div>
+                      </div>
                     </div>
-                  )
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="text-8xl mb-6 animate-wiggle">📈</div>
-                <h3 className="text-2xl font-bold text-white mb-4">no vibe history yet friend!</h3>
-                <p className="text-white/70 mb-8 text-lg">time to start your iconic journey 💫</p>
-                <Button 
-                  onClick={() => navigate('/quiz')}
-                  className="bg-gradient-to-r from-cyan-500 to-pink-500 hover:from-cyan-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-110"
-                >
-                  take your first quiz ✨
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    <div className="mt-4 bg-white/10 rounded-full h-3 overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-full transition-all duration-1000 group-hover:from-cyan-300 group-hover:to-pink-400"
+                        style={{ 
+                          width: `${entry.score}%`,
+                          transform: `scaleX(${loading ? 0 : 1})`,
+                          transformOrigin: 'left'
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                )
+              })}
+              
+              {vibeHistory.length > 5 && (
+                <div className="text-center mt-8 glass-card rounded-2xl p-6 bg-gradient-to-r from-purple-900/10 to-pink-900/10">
+                  <p className="text-white/70 text-lg">
+                    <span className="gradient-text font-semibold">+{vibeHistory.length - 5}</span> more vibe checks in your history!
+                  </p>
+                  <p className="text-white/50 text-sm mt-2">keep taking quizzes to build your vibe profile ✨</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
