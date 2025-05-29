@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Test</title>
+</head>
+<body>
+    <h1>Testing Vibe Checker Database</h1>
+    <div id="output"></div>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="clearData()">Clear Data</button>
+    
+    <script>
+        // Copy the database functions
+        const getFromStorage = (key) => {
+            try {
+                const data = localStorage.getItem(key)
+                return data ? JSON.parse(data) : []
+            } catch (error) {
+                console.error('Error reading from localStorage:', error)
+                return []
+            }
+        }
+
+        const saveToStorage = (key, data) => {
+            try {
+                localStorage.setItem(key, JSON.stringify(data))
+                return true
+            } catch (error) {
+                console.error('Error saving to localStorage:', error)
+                return false
+            }
+        }
+
+        const TABLES = {
+            users: 'vibeChecker_users',
+            currentVibes: 'vibeChecker_current_vibes',
+            vibeHistory: 'vibeChecker_history',
+            starredUsers: 'vibeChecker_starred_users'
+        }
+
+        const initializeSampleData = () => {
+            const users = getFromStorage(TABLES.users)
+            
+            if (users.length === 0) {
+                const sampleUsers = [
+                    {
+                        id: 'demo_1',
+                        username: 'demo_user_1',
+                        password: 'password123',
+                        avatar: '😄',
+                        created_at: new Date().toISOString()
+                    },
+                    {
+                        id: 'demo_2',
+                        username: 'demo_user_2',
+                        password: 'password123',
+                        avatar: '🤗',
+                        created_at: new Date().toISOString()
+                    },
+                    {
+                        id: 'demo_3',
+                        username: 'vibe_master',
+                        password: 'password123',
+                        avatar: '✨',
+                        created_at: new Date().toISOString()
+                    }
+                ]
+                
+                const sampleCurrentVibes = [
+                    {
+                        id: 'vibe_1',
+                        user_id: 'demo_1',
+                        vibe: 'Super Positive',
+                        score: 42,
+                        updated_at: new Date().toISOString()
+                    },
+                    {
+                        id: 'vibe_2',
+                        user_id: 'demo_2',
+                        vibe: 'Pretty Good',
+                        score: 35,
+                        updated_at: new Date().toISOString()
+                    }
+                ]
+                
+                saveToStorage(TABLES.users, sampleUsers)
+                saveToStorage(TABLES.currentVibes, sampleCurrentVibes)
+                
+                console.log('📝 Initialized sample data for local database fallback')
+                return sampleUsers
+            }
+            return users
+        }
+
+        const loginUser = (username, password) => {
+            try {
+                const users = getFromStorage(TABLES.users)
+                console.log('Available users:', users)
+                
+                const user = users.find(u => u.username === username && u.password === password)
+                
+                if (!user) {
+                    return { success: false, error: 'Invalid username or password' }
+                }
+                
+                return { success: true, user }
+            } catch (error) {
+                return { success: false, error: error.message }
+            }
+        }
+
+        function clearData() {
+            localStorage.removeItem(TABLES.users)
+            localStorage.removeItem(TABLES.currentVibes)
+            localStorage.removeItem(TABLES.vibeHistory)
+            localStorage.removeItem(TABLES.starredUsers)
+            localStorage.removeItem('vibeCheckerUser')
+            document.getElementById('output').innerHTML = '<p>🗑️ Data cleared</p>'
+        }
+
+        function testLogin() {
+            console.log('Clearing and initializing data...')
+            clearData()
+            
+            const users = initializeSampleData()
+            console.log('Users created:', users)
+            
+            console.log('Testing login...')
+            const result = loginUser('demo_user_1', 'password123')
+            console.log('Login result:', result)
+            
+            if (result.success) {
+                // Store in auth localStorage key
+                localStorage.setItem('vibeCheckerUser', JSON.stringify(result.user))
+                console.log('User stored in auth localStorage')
+            }
+            
+            document.getElementById('output').innerHTML = 
+                '<p>Login test: ' + (result.success ? 'SUCCESS ✅' : 'FAILED ❌') + '</p>' +
+                '<p>User: ' + JSON.stringify(result.user || result.error) + '</p>' +
+                '<p>Check console for details</p>'
+        }
+
+        // Initialize on page load
+        initializeSampleData()
+    </script>
+</body>
+</html>
