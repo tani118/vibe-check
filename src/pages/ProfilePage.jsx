@@ -4,13 +4,14 @@ import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { useAuth } from '../hooks/useAuth'
-import { getUserVibeHistory, updateUserProfile } from '../lib/database'
+import { getUserVibeHistory, updateUserProfile, getUserLovedPlaylists } from '../lib/database'
 import { getVibeFromScore } from '../lib/quiz'
 
 const avatarOptions = ['😊', '😎', '🤗', '😄', '🥳', '😇', '🤠', '🥰', '😋', '🤩', '😌', '🙃', '💫', '✨', '🌟', '💎', '🔥', '💯', '🎯', '🚀']
 
 const ProfilePage = () => {
   const [vibeHistory, setVibeHistory] = useState([])
+  const [lovedPlaylists, setLovedPlaylists] = useState([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [newUsername, setNewUsername] = useState('')
@@ -47,6 +48,7 @@ const ProfilePage = () => {
     setNewUsername(user.username)
     setSelectedAvatar(user.avatar)
     fetchVibeHistory()
+    fetchLovedPlaylists()
   }, [user])
 
   const fetchVibeHistory = async () => {
@@ -59,6 +61,17 @@ const ProfilePage = () => {
       console.error('Error fetching vibe history:', error)
     }
     setLoading(false)
+  }
+
+  const fetchLovedPlaylists = async () => {
+    try {
+      const result = await getUserLovedPlaylists(user.id)
+      if (result.success) {
+        setLovedPlaylists(result.playlists)
+      }
+    } catch (error) {
+      console.error('Error fetching loved playlists:', error)
+    }
   }
 
   const handleSaveProfile = async () => {
@@ -175,6 +188,12 @@ const ProfilePage = () => {
               className="btn-ghost text-white/80 hover:text-white font-medium"
             >
               community
+            </button>
+            <button 
+              onClick={() => navigate('/music')} 
+              className="btn-ghost text-white/80 hover:text-white font-medium"
+            >
+              music
             </button>
           </div>
         </div>
@@ -372,6 +391,82 @@ const ProfilePage = () => {
                   <p className="text-white/50 text-sm mt-2">keep taking quizzes to build your vibe profile ✨</p>
                 </div>
               )}
+            </div>
+          )}
+        </div>
+
+        {/* Loved Playlists Section */}
+        <div className="glass-card rounded-3xl p-8 bg-gradient-to-br from-pink-900/20 to-purple-900/20">
+          <h2 className="text-3xl font-black gradient-text mb-6 flex items-center">
+            <span className="mr-3 text-2xl">❤️</span>
+            your loved playlists
+          </h2>
+          
+          {lovedPlaylists.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="text-8xl mb-6 animate-pulse">🎵</div>
+              <h3 className="text-2xl font-bold text-white mb-4">no loved playlists yet!</h3>
+              <p className="text-white/70 text-lg mb-8 max-w-md mx-auto">
+                discover music that matches your vibe and start building your collection!
+              </p>
+              <button 
+                onClick={() => navigate('/music')} 
+                className="btn-primary text-lg px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+              >
+                discover music
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {lovedPlaylists.map((playlist, i) => (
+                <div 
+                  key={playlist.id} 
+                  className="glass-card rounded-xl p-4 bg-black/20 hover:bg-black/30 transition-all duration-300 hover:scale-[1.02] group cursor-pointer"
+                  onClick={() => window.open(`https://open.spotify.com/playlist/${playlist.playlist_id}`, '_blank')}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden shadow-lg flex-shrink-0 bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500">
+                      <img 
+                        src={playlist.playlist_image_url} 
+                        alt={playlist.playlist_name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          e.target.style.display = 'none'
+                          e.target.parentElement.innerHTML = `
+                            <div class="w-full h-full flex items-center justify-center text-white">
+                              <div class="text-center">
+                                <div class="text-2xl">🎵</div>
+                              </div>
+                            </div>
+                          `
+                        }}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-white font-semibold text-sm group-hover:gradient-text transition-all duration-300 truncate">
+                        {playlist.playlist_name}
+                      </h4>
+                      <p className="text-white/60 text-xs mt-1 line-clamp-2">
+                        {playlist.playlist_description}
+                      </p>
+                      <div className="flex items-center mt-2">
+                        <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full">
+                          {playlist.vibe_category}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-white/50 text-xs">
+                      {new Date(playlist.created_at).toLocaleDateString()}
+                    </span>
+                    <div className="flex items-center text-red-400 text-xs">
+                      <span className="mr-1">❤️</span>
+                      <span>loved</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>

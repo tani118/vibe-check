@@ -261,3 +261,203 @@ export const getAllUsers = async () => {
     return { success: false, error: error.message }
   }
 }
+
+// Playlist love/save functions
+export const lovePlaylist = async (userId, playlist, vibeCategory) => {
+  try {
+    const { data, error } = await supabase
+      .from('loved_playlists')
+      .insert([{
+        user_id: userId,
+        playlist_id: playlist.id,
+        playlist_name: playlist.name,
+        playlist_description: playlist.description,
+        playlist_image_url: playlist.image,
+        vibe_category: vibeCategory
+      }])
+      .select()
+      .single()
+    
+    if (error) {
+      // If table doesn't exist, fallback to localStorage
+      if (error.code === '42P01') {
+        console.warn('loved_playlists table not found, using localStorage fallback')
+        return lovePlaylistLocalStorage(userId, playlist, vibeCategory)
+      }
+      // If it's a duplicate, that's fine - just return success
+      if (error.code === '23505') {
+        return { success: true, message: 'Playlist already loved' }
+      }
+      return { success: false, error: error.message }
+    }
+    
+    return { success: true, data }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+export const unlovePlaylist = async (userId, playlistId) => {
+  try {
+    const { error } = await supabase
+      .from('loved_playlists')
+      .delete()
+      .eq('user_id', userId)
+      .eq('playlist_id', playlistId)
+    
+    if (error) {
+      // If table doesn't exist, fallback to localStorage
+      if (error.code === '42P01') {
+        console.warn('loved_playlists table not found, using localStorage fallback')
+        return unlovePlaylistLocalStorage(userId, playlistId)
+      }
+      return { success: false, error: error.message }
+    }
+    
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+export const getUserLovedPlaylists = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from('loved_playlists')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+    
+    if (error) {
+      // If table doesn't exist, fallback to localStorage
+      if (error.code === '42P01') {
+        console.warn('loved_playlists table not found, using localStorage fallback')
+        return getUserLovedPlaylistsLocalStorage(userId)
+      }
+      return { success: false, error: error.message }
+    }
+    
+    return { success: true, playlists: data }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+export const isPlaylistLoved = async (userId, playlistId) => {
+  try {
+    const { data, error } = await supabase
+      .from('loved_playlists')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('playlist_id', playlistId)
+      .single()
+    
+    if (error && error.code !== 'PGRST116') {
+      // If table doesn't exist, fallback to localStorage
+      if (error.code === '42P01') {
+        console.warn('loved_playlists table not found, using localStorage fallback')
+        return isPlaylistLovedLocalStorage(userId, playlistId)
+      }
+      return { success: false, error: error.message }
+    }
+    
+    return { success: true, isLoved: !!data }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+export const togglePlaylistLove = async (userId, playlist, vibeCategory) => {
+  try {
+    const isLovedResult = await isPlaylistLoved(userId, playlist.id)
+    
+    if (!isLovedResult.success) {
+      return isLovedResult
+    }
+    
+    if (isLovedResult.isLoved) {
+      return await unlovePlaylist(userId, playlist.id)
+    } else {
+      return await lovePlaylist(userId, playlist, vibeCategory)
+    }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+// localStorage fallback functions for when loved_playlists table doesn't exist
+const LOVED_PLAYLISTS_KEY = 'vibeChecker_lovedPlaylists'
+
+const lovePlaylistLocalStorage = (userId, playlist, vibeCategory) => {
+  try {
+    const existingData = JSON.parse(localStorage.getItem(LOVED_PLAYLISTS_KEY) || '{}')
+    const userPlaylists = existingData[userId] || []
+    
+    // Check if already exists
+    const exists = userPlaylists.some(p => p.playlist_id === playlist.id)
+    if (exists) {
+      return { success: true, message: 'Playlist already loved' }
+    }
+    
+    // Add new playlist
+    const newPlaylist = {
+      user_id: userId,
+      playlist_id: playlist.id,
+      playlist_name: playlist.name,
+      playlist_description: playlist.description,
+      playlist_image_url: playlist.image,
+      vibe_category: vibeCategory,
+      created_at: new Date().toISOString()
+    }
+    
+    userPlaylists.push(newPlaylist)
+    existingData[userId] = userPlaylists
+    localStorage.setItem(LOVED_PLAYLISTS_KEY, JSON.stringify(existingData))
+    
+    return { success: true, data: newPlaylist }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+const unlovePlaylistLocalStorage = (userId, playlistId) => {
+  try {
+    const existingData = JSON.parse(localStorage.getItem(LOVED_PLAYLISTS_KEY) || '{}')
+    const userPlaylists = existingData[userId] || []
+    
+    // Filter out the playlist to remove
+    const updatedPlaylists = userPlaylists.filter(p => p.playlist_id !== playlistId)
+    existingData[userId] = updatedPlaylists
+    localStorage.setItem(LOVED_PLAYLISTS_KEY, JSON.stringify(existingData))
+    
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+const getUserLovedPlaylistsLocalStorage = (userId) => {
+  try {
+    const existingData = JSON.parse(localStorage.getItem(LOVED_PLAYLISTS_KEY) || '{}')
+    const userPlaylists = existingData[userId] || []
+    
+    // Sort by created_at descending
+    userPlaylists.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    
+    return { success: true, playlists: userPlaylists }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+const isPlaylistLovedLocalStorage = (userId, playlistId) => {
+  try {
+    const existingData = JSON.parse(localStorage.getItem(LOVED_PLAYLISTS_KEY) || '{}')
+    const userPlaylists = existingData[userId] || []
+    
+    const isLoved = userPlaylists.some(p => p.playlist_id === playlistId)
+    return { success: true, isLoved }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}

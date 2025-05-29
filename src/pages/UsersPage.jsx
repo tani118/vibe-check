@@ -131,6 +131,12 @@ const UsersPage = () => {
               Home
             </button>
             <button
+              onClick={() => navigate('/music')}
+              className="btn-ghost"
+            >
+              Music
+            </button>
+            <button
               onClick={() => navigate('/profile')}
               className="btn-ghost"
             >

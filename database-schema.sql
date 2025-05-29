@@ -39,11 +39,26 @@ CREATE TABLE starred_users (
   CHECK (user_id != starred_user_id) -- Users can't star themselves
 );
 
+-- Loved playlists table (stores user's favorite playlists)
+CREATE TABLE loved_playlists (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  playlist_id VARCHAR(50) NOT NULL, -- Spotify playlist ID
+  playlist_name VARCHAR(255) NOT NULL,
+  playlist_description TEXT,
+  playlist_image_url TEXT,
+  vibe_category VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, playlist_id)
+);
+
 -- Create indexes for better performance
 CREATE INDEX idx_current_vibes_user_id ON current_vibes(user_id);
 CREATE INDEX idx_vibe_history_user_id ON vibe_history(user_id);
 CREATE INDEX idx_starred_users_user_id ON starred_users(user_id);
 CREATE INDEX idx_starred_users_starred_user_id ON starred_users(starred_user_id);
+CREATE INDEX idx_loved_playlists_user_id ON loved_playlists(user_id);
+CREATE INDEX idx_loved_playlists_vibe_category ON loved_playlists(vibe_category);
 
 -- Insert some sample data (optional)
 INSERT INTO users (username, password, avatar) VALUES 

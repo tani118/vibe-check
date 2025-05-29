@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
+import VibeMusic from '../components/VibeMusic'
 import { quizQuestions, getVibeFromScore } from '../lib/quiz'
 import { submitVibeResult } from '../lib/database'
 import { useAuth } from '../hooks/useAuth'
@@ -12,6 +13,7 @@ const QuizPage = () => {
   const [loading, setLoading] = useState(false)
   const [quizComplete, setQuizComplete] = useState(false)
   const [vibeResult, setVibeResult] = useState(null)
+  const [showMusic, setShowMusic] = useState(false)
   
   // Generate stable random values for background elements
   const [backgroundElements] = useState(() => 
@@ -141,6 +143,44 @@ const QuizPage = () => {
                   }
                 </div>
               </div>
+
+              {/* Music Integration Button */}
+              {!showMusic && (
+                <div className="mb-12">
+                  <button
+                    onClick={() => setShowMusic(true)}
+                    className="glass-card p-6 w-full hover:bg-white/10 transition-all duration-300 group border-2 border-primary-500/30 hover:border-primary-400/60"
+                  >
+                    <div className="flex items-center justify-center space-x-4">
+                      <div className="text-4xl group-hover:animate-bounce">🎵</div>
+                      <div className="text-left">
+                        <div className="text-xl font-bold text-white mb-1">
+                          Dive Deeper Into This Vibe
+                        </div>
+                        <div className="text-neutral-300 text-sm">
+                          Let music amplify your {vibeResult.vibe} energy
+                        </div>
+                      </div>
+                      <div className="text-2xl text-primary-400 group-hover:scale-110 transition-transform">
+                        →
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              )}
+
+              {/* Music Component */}
+              {showMusic && (
+                <div className="mb-12">
+                  <VibeMusic 
+                    vibeScore={vibeResult.score}
+                    vibeName={vibeResult.vibe}
+                    onPlaylistSelect={(playlist, action) => {
+                      console.log('Playlist interaction:', playlist.name, action)
+                    }}
+                  />
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <button

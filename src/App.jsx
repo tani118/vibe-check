@@ -10,6 +10,7 @@ import HomePage from './pages/HomePage'
 import QuizPage from './pages/QuizPage'
 import ProfilePage from './pages/ProfilePage'
 import UsersPage from './pages/UsersPage'
+import MusicDiscoveryPage from './pages/MusicDiscoveryPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // Protected Route component
@@ -65,6 +66,7 @@ function App() {
             <Route path="/quiz" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             <Route path="/users" element={<ProtectedRoute><UsersPage /></ProtectedRoute>} />
+            <Route path="/music" element={<ProtectedRoute><MusicDiscoveryPage /></ProtectedRoute>} />
             
             {/* Catch all route */}
             <Route path="*" element={<NotFoundPage />} />

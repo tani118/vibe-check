@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
+import VibeMusic from '../components/VibeMusic'
 import { useAuth } from '../hooks/useAuth'
 import { getCurrentVibe, getStarredUsers } from '../lib/database'
 import { getVibeFromScore } from '../lib/quiz'
+import { musicService } from '../lib/musicService'
 
 const HomePage = () => {
   const [currentVibe, setCurrentVibe] = useState(null)
   const [starredUsers, setStarredUsers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showMusic, setShowMusic] = useState(false)
+  const [lastPlaylist, setLastPlaylist] = useState(null)
   
   // Generate stable random values for background elements
   const [backgroundElements] = useState(() => 
@@ -41,6 +45,12 @@ const HomePage = () => {
         if (vibeResult.success) {
           const vibeInfo = getVibeFromScore(vibeResult.vibe.score)
           setCurrentVibe({ ...vibeResult.vibe, ...vibeInfo })
+          
+          // Load last playlist for this vibe from localStorage
+          const savedLastPlaylist = localStorage.getItem(`lastPlaylist_${vibeInfo.vibe}`)
+          if (savedLastPlaylist) {
+            setLastPlaylist(JSON.parse(savedLastPlaylist))
+          }
         }
 
         // Get starred users' vibes
@@ -117,6 +127,12 @@ const HomePage = () => {
                 Profile
               </button>
               <button
+                onClick={() => navigate('/music')}
+                className="btn-ghost"
+              >
+                Music
+              </button>
+              <button
                 onClick={() => navigate('/users')}
                 className="btn-ghost"
               >
@@ -169,10 +185,35 @@ const HomePage = () => {
 
                     <button
                       onClick={() => navigate('/quiz')}
-                      className="btn-primary w-full"
+                      className="btn-primary w-full mb-4"
                     >
                       Retake Quiz
                     </button>
+                    
+                    {/* Quick Music Access */}
+                    {lastPlaylist && (
+                      <div className="glass-card p-4 mt-4">
+                        <div className="text-sm text-neutral-400 mb-2">🎵 Last Playlist:</div>
+                        <div className="text-white font-semibold text-sm mb-2">
+                          "{lastPlaylist.name}"
+                        </div>
+                        <button
+                          onClick={() => setShowMusic(true)}
+                          className="btn-ghost w-full text-sm py-2"
+                        >
+                          Get New Music
+                        </button>
+                      </div>
+                    )}
+                    
+                    {!lastPlaylist && (
+                      <button
+                        onClick={() => setShowMusic(true)}
+                        className="btn-ghost w-full mt-4 text-sm py-2"
+                      >
+                        🎧 Get Music for This Vibe
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-6">
@@ -213,6 +254,35 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+
+        {/* Music Section */}
+        {showMusic && currentVibe && (
+          <div className="mb-16">
+            <VibeMusic 
+              vibeScore={currentVibe.score}
+              vibeName={currentVibe.vibe}
+              onPlaylistSelect={(playlist, action) => {
+                // Save last playlist for this vibe
+                localStorage.setItem(`lastPlaylist_${currentVibe.vibe}`, JSON.stringify(playlist))
+                setLastPlaylist(playlist)
+                
+                if (action === 'opened') {
+                  // Optional: Show success message
+                  console.log('Opened playlist:', playlist.name)
+                }
+              }}
+            />
+            
+            <div className="text-center mt-6">
+              <button
+                onClick={() => setShowMusic(false)}
+                className="btn-ghost text-sm"
+              >
+                Hide Music ↑
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Starred Users Section */}
         <div className="glass-card p-8">
