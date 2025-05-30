@@ -401,7 +401,7 @@ const LandingPage = () => {
               </button>
               
               <p className="text-lg text-neutral-400">
-                Free forever • No spam • Join 50,000+ users
+                Free forever • No spam
               </p>
             </div>
           </div>
@@ -420,9 +420,6 @@ const LandingPage = () => {
               <a href="#" className="hover:text-white transition-colors">Terms</a>
               <a href="#" className="hover:text-white transition-colors">Support</a>
             </div>
-          </div>
-          <div className="text-center mt-8 text-neutral-500">
-            © 2024 VibeCheck. Made with ✨ for authentic souls.
           </div>
         </div>
       </footer>
