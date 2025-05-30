@@ -325,8 +325,8 @@ const LandingPage = () => {
             {[
               {
                 text: "VibeCheck helped me understand my emotional patterns in ways I never imagined. It's like having a personal therapist in your pocket.",
-                author: "Arnav Bhatnagar",
-                title: "Student",
+                author: "Lakshya Bhutani",
+                title: "Student and Creator@VibeCheck",
                 vibe: "✨ Absolutely Radiant"
               },
               {
