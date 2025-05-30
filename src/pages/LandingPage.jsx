@@ -325,26 +325,26 @@ const LandingPage = () => {
             {[
               {
                 text: "VibeCheck helped me understand my emotional patterns in ways I never imagined. It's like having a personal therapist in your pocket.",
-                author: "Sarah Chen",
-                title: "UX Designer",
+                author: "Arnav Bhatnagar",
+                title: "Student",
                 vibe: "✨ Absolutely Radiant"
               },
               {
                 text: "The community aspect is incredible. I've connected with people who truly get my energy and it's transformed my social life.",
-                author: "Marcus Johnson",
-                title: "Software Engineer", 
+                author: "Parth Sharma",
+                title: "Student", 
                 vibe: "🔥 Super Positive"
               },
               {
                 text: "Tracking my vibes over time showed me patterns I was completely unaware of. It's been a game-changer for my mental health.",
-                author: "Elena Rodriguez",
-                title: "Graduate Student",
+                author: "Adit Vatsal Srivastava",
+                title: "Student",
                 vibe: "😊 Pretty Good"
               },
               {
                 text: "The quiz questions are so thoughtful and the insights are spot-on. It's like it sees right through to my core.",
-                author: "Alex Kim",
-                title: "Creative Director",
+                author: "Raghav Sharma",
+                title: "Student",
                 vibe: "🙂 Decent"
               }
             ].map((testimonial, i) => (
