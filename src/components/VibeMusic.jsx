@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import { Button } from './ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 
-const VibeMusic = ({ vibeScore, vibeName, onPlaylistSelect }) => {
+const VibeMusic = ({ vibeName, onPlaylistSelect }) => {
   const [currentPlaylist, setCurrentPlaylist] = useState(null)
   const [allPlaylists, setAllPlaylists] = useState([])
   const [isLoading, setIsLoading] = useState(false)

@@ -6,7 +6,6 @@ import VibeMusic from '../components/VibeMusic'
 import { useAuth } from '../hooks/useAuth'
 import { getCurrentVibe, getStarredUsers } from '../lib/database'
 import { getVibeFromScore } from '../lib/quiz'
-import { musicService } from '../lib/musicService'
 
 const HomePage = () => {
   const [currentVibe, setCurrentVibe] = useState(null)

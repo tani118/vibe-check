@@ -224,11 +224,9 @@ export class MusicService {
     };
   }
 
-  getRandomPlaylistForVibe(vibeName, context = null) {
+  getRandomPlaylistForVibe(vibeName) {
     const playlists = this.vibePlaylistPools[vibeName] || [];
     if (playlists.length === 0) return null;
-    
-    // Add contextual selection logic here if needed
     const randomIndex = Math.floor(Math.random() * playlists.length);
     return playlists[randomIndex];
   }
