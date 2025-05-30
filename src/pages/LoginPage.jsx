@@ -65,7 +65,7 @@ const LoginPage = () => {
     setError('')
     
     try {
-      const result = await loginUser(demoUsername, 'demo123')
+      const result = await loginUser('temp', 'temp123')
       
       if (result.success) {
         login(result.user)
@@ -219,7 +219,7 @@ const LoginPage = () => {
                 <p className="text-white/70 text-center text-sm mb-4">
                   try a demo account to explore the vibe ✨
                 </p>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   <button
                     onClick={() => handleDemoLogin('demo_user')}
                     disabled={loading}
@@ -227,13 +227,7 @@ const LoginPage = () => {
                   >
                     demo user
                   </button>
-                  <button
-                    onClick={() => handleDemoLogin('test_account')}
-                    disabled={loading}
-                    className="btn-secondary text-sm py-2 disabled:opacity-50"
-                  >
-                    test account
-                  </button>
+
                 </div>
               </div>
             </div>
@@ -252,11 +246,6 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <div className="mt-4 text-center">
-              <button className="text-white/50 hover:text-white/70 transition-colors text-sm">
-                forgot password? we've all been there 💀
-              </button>
-            </div>
           </div>
 
           {/* Back to home */}
