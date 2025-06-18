@@ -1,5 +1,5 @@
 # 🎵 VibeCheck - Music Discovery & Personality Quiz App
-
+### Created as an assignment for Emergent.sh
 A modern React application that combines personality assessment with music discovery, featuring Spotify integration, user authentication, and beautiful glassmorphism design.
 
 # Check it out at https://vibe-check-amber.vercel.app/
